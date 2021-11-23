@@ -1,0 +1,5 @@
+compile class using javac
+
+javac Host.java
+run jar cfm Host.jar Host.mf Host.class WriteWithLocks.class
+java -jar
