@@ -23,7 +23,7 @@ public class WriteWithLocks {
             if (fileLock != null) {
 
                 buffer = ByteBuffer.wrap(data.getBytes());
-                buffer.put(data.toString().getBytes());
+                buffer.put(data.getBytes());
                 buffer.flip();
                 randomAccessFile.seek(randomAccessFile.length());
                 while (buffer.hasRemaining())
