@@ -1,0 +1,292 @@
+-------------------------------------------------
+
+6390  Fall 21 Project
+
+DUE:
+
+NOTE: your project MUST run on one of the Unix machines on campus, NOT ON YOUR PC. I recommend {net01, net02, ...,net20}.utdallas.edu (linux machines) or csgrads{1,2}.utdallas.edu. If you use java, for sure you have to use the netXX machines (trust me). 
+
+BTW, I believe the net01, net02, etc machines don't have compilers. You compile in csgrads1 and you execute your code in net01 (or whichever net machine which is lightly loaded). 
+
+Do NOT use general purpose linux machines of the university since they will complain about resource usage.
+
+You can use any language that you want, as long as it runs on the unix machines on campus.
+
+I recommend that you DO NOT use threads! In the past, students unknowingly have created around 200 threads which of course causes the system to kill your programs.
+
+You will submit your source code and any instructions on how to compile it (i.e. which machine you compiled it on and using what command). You have to submite a README file, along with your source code, indicating: on which machine you run it, *exactly* what command you used to compile it.
+
+Please make sure your program uses the arguments as described below and in the order described. Otherwise, the TA may have to modify the shell scripts to run our tests, which we will not be happy about (hence, possible point deduction).
+
+We will run your code in the UTD unix machine that you mention in the README file, and see if it works.
+
+This is probably incomplete and with typos, I will update it as I find them, but 
+it gives you a good idea where to start.
+
+General remarks
+----------------
+
+The language you choose is irrelevant to me.
+
+However, I expect your code to run in the Unix systems here at UTD. Hence, you 
+better make sure there is a compiler for your language in the Unix systems here 
+at UTD
+
+To turn in your program, you will send us the source code of your program. We 
+will compile it and run it.
+
+Since your source code will likely consist of several files, you will zip them 
+all together. Among these files there must be a README file that contains your 
+name and ID and DETAILED instructions to compile your code in the Unix system. 
+If we cannot compile it because your instructions are wrong it will receive the 
+same grade as a program that has compilation errors.
+
+YOU ARE FORBIDDEN FROM USING THREADS. I have my reasons. Trust me, you 
+don't need them.
+
+
+General description
+--------------------
+
+Your task is to have a set of processes communicate with each other via files 
+(no sockets, just plain old files). The purpose of these processes is to 
+implement DVMRP (distance vector multicast routing). 
+
+Each node in our network will be implemented via a Unix process. There will be 
+three different types of processes, hosts, routers, and the controller. The 
+controller is needed to handle I/O, as will be discussed below.
+
+Some hosts will send multicast messages, and others will receive multicast 
+messages. For simplicity we assume there exists only a single group.
+
+Routers will learn how to reach each LAN using a simple distance vector routing 
+protocol.
+
+Each process should run for 120 SECONDS and should exit on its own after this 
+time elapses.
+
+
+LAN and Node ID's
+----------
+
+ID's are a single digit 0 .. 9
+
+
+Each host will have a unique single-digit ID. Each router will also have a 
+unique single-digit ID. Note that a host and a router can have the same ID. 
+That is fine, since due to the format of the messages below that will not be a 
+problem.
+
+Each LAN will have a unique single-digit ID.
+
+
+Connectivity
+-------------
+
+Each host is attached to only a single lan. Each router is attached to at most 
+10 lans, and there can be at most 10 lans. 
+
+There can be at most 10 hosts and at most 10 routers.
+
+Process arguments
+-----------------
+
+A host will receive the following arguments in the Unix command line:
+
+    host-id lan-id type time-to-start period 
+
+Host ID is the single-digit ID of the host
+lan-ID is the single-digit ID of the lan attached to the host
+type - this is either "sender" or "receiver", i.e. the host is either a sender 
+       of the group or a receiver of the group
+time-to-start time (in seconds) after which the host may attempt to send its 
+	  first data message to the group (see below) if it is a sender
+          time-to-start is not present if the host is a receiver
+period is a two-digit integer saying how many seconds should elapse before the host
+         sends the next multicast data message (if it is a sender)
+
+For example, a host process can be called from the Unix command line in the 
+following manner (assuming the executable of the host program is simply called 
+host)
+
+    host 10 2 sender 30 10 &
+
+This creates a process from the executable file "host" and runs it in the 
+background (i.e., batch mode, that is what the & is for). The ID of the host 
+process is 10, its lan is 2, it is a sender process, and it will begin to send 
+data messages at time 30 and will send the next data message every 10 
+seconds.
+
+A router process receives the following arguments
+    
+    router-id lan-ID lan-ID lan-ID ...
+
+router-ID is a single-digit unique router ID
+Each of lan-ID is the ID of a lan to which the router is attached to
+
+For example, a router process can be called from the Unix command line in the 
+following manner (assuming the executable of the program is simply called 
+router)
+
+   router 5 1 5 2 9 &
+
+This creates a process from the executable file router and runs it in the 
+background. The id of the router is 5, and it is attached to LANS 1, 5, 2, and 
+9.
+
+The controller process receives the following arguments
+
+    "host" id id id . . . id "router" id id . . . id "lan" id id . .  . id
+
+"host" is simply the string "host"
+the ID's that follow is a list of all the ID's of all the hosts in the network
+"router" is simply the string "router"
+the ID's that follow is a list of all the ID's of all the routers in the network
+"lan" is simply the string "lan"
+the ID's that follow is a list of all the ID's of all the LANS in the network
+
+For example, the (because there is only one) controller process can be called 
+from the Unix command line in the following manner (assuming the executable of 
+the controller program is simply called controller)
+
+  controller host 9 7 1 router 5 8 11 lan 1 5 2 9 &
+
+
+
+Emulation of LANS using files
+------------------------------
+
+Each host will open a file for writing, called houtX, where X is the ID of 
+the host. Here, the host will write the messages that it wants to send over 
+its LAN (note that the host has only one LAN). Each message will be written in a 
+separate line of the file.
+
+Each router will also open a file called routX, where X is the ID of the 
+router. Here, the router will write the messages that it wants to send over 
+any of the  LANS that it is connected to. Each message will be written in a 
+separate line of the file. Furthermore, if the router sends the "same" message 
+over more than one LAN, the message has to be written MULTIPLE times into the 
+file, one per LAN over which the message is to be sent.
+
+Note that routers and hosts only APPEND to their out files, thus, messages are 
+NOT over-written. (This leaves a nice record of the network activity for you to 
+see when your program runs) 
+
+The controller will have a list of all the hosts, routers, and LANS (see above). 
+
+Each LAN will have a file, lanX, where X is the ID of the lan. Every message 
+that a host/router sends to lan X is copied (APPENDED) by the controller into 
+file lanX.
+
+ONCE EVERY SECOND, the controller will check the out file of each host/router, 
+and if there are new messages in this file, it will copy (APPEND) the message 
+to the corresponding file of the LAN
+
+Note that the controller can have up to 30 files open (the hout of every host, 
+the rout of every router and the lanX of every LAN). Since this may be too much 
+(see if you can open 30 files at once but I doubt it) the controller may have 
+to open some files, manipulate them, REMEMBER where it left off in the file, 
+and then close the file.
+
+
+Host behavior
+--------------
+
+A host sends only two types of messages. One of them reports to the routers in 
+its lan that it is a receiver. The other one is a data message if the host is a 
+sender
+
+A host advertises that it is a receiver by sending the following message
+
+   receiver lan-id
+
+lan-id is the lan of the host, and receiver is just the string "receiver".
+
+The host will send this message when it starts up, and after that it will 
+send the message again every 10 seconds.
+
+If a host is a sender, it must wait until its time-to-start. Then it begins to 
+send messages of the following form every "period" seconds
+
+  data lan-id host-lan-id
+
+it is simply the string "data" followed by the lan-id of the host and the 
+lan-id of the host (again). Why twice? The first lan-id indicates the lan 
+over which the message is currently being forwarded. This changes at every 
+hop over which the message is forwarded. The second one, host-lan-id, 
+indicates the lan-id of the host that originally created the message. This 
+second one DOES NOT change at every hop. It is used by the routers to 
+figure out where is the root of the multicast (source) tree.
+
+ONCE PER SECOND, if the host is a receiver, the host will check for new 
+messages in file lanX, where X is the lan of the host. If any of the new 
+messages are for the host, the host will read them and copy them to a file 
+called hinX, where X is the id of the host. In this way we can check if the 
+multicast messages were received by the receivers.
+
+In order for things to work in a sensible manner, the time-to-start of each 
+host should be big enough to ensure that the distance-vector routing protocol 
+of the routers has stabilized, i.e., routes to each lan are stable (see
+below)
+
+
+Router Behavior
+-----------------
+
+Each router has two functions: find a path to every LAN, and perform 
+DVMRP.
+
+ONCE PER SECOND, the router will check for new messages in every file lanX, 
+where X is a LAN of the host, and reacts accordingly (e.g., if the message is 
+a data message from a host that needs to be forwarded to other LANS it does 
+so).
+
+Every 5 seconds, each router will send a distance vector message to each of its 
+LAN's, the format is as follows
+
+   DV lan-id router-id d0 router0 d1 router1 d2 router2 . . . d9 router9
+
+here DV is just the string "DV", router-id is the id of the router 
+sending the message, lan-id is the lan over which this message is 
+sent, dX is the distance (hop count) of the router to lanX, and routerX is the 
+router id of the next hop router to reach lanX. A distance of 10 will denote 
+infinity (Since the maximum path is of size 9). If a router is directly 
+attached to a lan then its hop count to this lan is zero.
+
+When calculating the next hop to a destination, routers will break hop-count 
+ties between two potential next hops in favor of the next-hop router that has a 
+lower router-id. In this way all of us in the class will end up with the same 
+route to every lan.
+
+Whenever the router sees the following message in one of its lans
+
+  data lan-id host-lan-id
+
+then it may forward it to other lans according to DVMRP. However, when doing so 
+note that the lan-id in the message will change (this is to help the controller 
+determine to which file it should copy the message to). The host-lan-id WILL NOT 
+change. This identifies the root lan of the multicast tree.
+
+Finally, non-membership reports are of the following form
+
+  NMR lan-id router-id host-lan-id
+
+lan-id is just the lan over which the NMR is sent (again, this is just for the 
+controller to know where to put the message). The router-id is the id of the 
+router sending the NMR. The host-lan-id is the lan of the source, i.e., the root 
+lan of the multicast tree being trimmed.
+
+The first NMR of a router is sent immediately when the router determines that 
+it needs to send one. After that, non-membership reports are sent by the router 
+every 10 seconds.
+
+If a parent router stops receiving NMR's from a child router for 20 seconds, 
+then it forgets about the old NMR's and behaves as if the child router had 
+never sent an NMR (and hence it may start sending data over this lan).
+
+If a router stops receiving "receiver" messages from receiving hosts in a 
+LAN for 20 seconds, then it assumes there are no more receivers in that LAN.
+
+THE END :-)
+
+

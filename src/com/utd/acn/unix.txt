@@ -1,0 +1,86 @@
+
+You can log into the linux machines using ssh (secure shell) from any other 
+Unix system. From windows, you can use a free utility called "putty.exe",
+you can find it on the web (there are others, lixke Xshell). Most windows 
+machines in our department already have this utility or a similar one. 
+
+These machines may not be “visible” to the outside world. So, you could ssh into babbage.utdallas.edu and then from there to csgrads1 (or csgrads2), you could also try to ssh into pubssh.utdallas.edu and then to csgrads(1 or 2).
+
+Basic UNIX commands
+
+When writing your program, a text editor is needed. Those of you who know 
+how to use vi or emacs can skip this section. Pico is the ideal basic text 
+editor for UTD UNIX machines. To use the editor after logging on the UTD 
+UNIX machines, simply type in 
+    pico "filename"
+where "filename" is the name of the file you want to edit. Needless
+to say, you don't type the " ", those are just to distinguish the 
+names of your files from command names.
+
+BTW, pico may have been replaced by another editor called nano. They are basically the same.
+
+The editor is a basic one. In order to quit the editor, simply key in 
+Ctrl-X. For Copying text, key in Ctrl U ( you can do this over many lines), 
+and pasting is Ctrl K. Reading a certain file is Ctrl-R. The instructions 
+are in fact laid out at the bottom of the editor window.
+
+To compile C++ programs, simply type  gcc "filename”. The executable file ( if the compilation was successful) will be produced in 
+a.out. In order to execute the file, simply type in "a.out". 
+
+Also, I asked for a specific name for the executable. If I asked your executable to be called “node”, then you have to rename the a.out file to node. You can do this by
+
+mv a.out node
+
+(mv is “move”, which in this case just renames the file)
+
+
+Often, you may want help on a particular command. If so, just type in man 
+"command" from the command prompt where "command" is the command you want 
+help on. If you want help on read, write commands the command is man -s 2 
+(read, write, open). Don't write in the parentheses, just choose one of the 
+words from the parentheses and type it in.
+
+The more command outputs a file to the screen, one page at a time,
+and waits for a space bar before outputting the next page to the screen.
+   more "filename"
+
+If you want to direct the compilation 
+report of your program to a file, you can do so by 
+  gcc "program file" &> "outfile"
+where "program file" is the name of the file you are trying to 
+compile and "outfile" is the file you want the output of the compilation to 
+be redirected to.  
+
+The command sleep (sec) will cause the system ( or thread) to sleep ( do 
+nothing) for the specified number of seconds. 
+Thus, sleep(5) will put your program to sleep for 5 seconds.
+
+Since "my world" ended with C++, I am not familiar with java. Try 
+ 
+ java -h
+
+and
+
+javac -h
+
+For options on these two commands. It should not take you long to figure out 
+how to use them if you are familiar with java.
+
+To remove (permanently!) a file you type
+
+   rm "filename"
+
+Before you log out, you should always check that you did not leave any 
+unwanted processes running. To find out which processes you have running, type 
+
+   ps -ef | grep "userid"
+
+where "userid" is your Unix login id. (mine is jcobb). That will give you a 
+list of processes with the process identifier (the process id is the large 
+number after your user id in the listing) To kill a process type the following
+
+   kill -9 "processid"
+
+PLEASE MAKE SURE YOU DO NOT LEAVE PROCESSES RUNNING FOREVERY IN THE BACKGROUND
+
+The sysadmins will be very upset at us if we leave processes running 
