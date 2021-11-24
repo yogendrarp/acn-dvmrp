@@ -16,8 +16,8 @@ public class WriteWithLocks {
     }
 
     public void writeToFileWithLock(String data) {
-        fc = randomAccessFile.getChannel();
         ByteBuffer buffer = null;
+        fc = randomAccessFile.getChannel();
 
         try (FileLock fileLock = fc.tryLock()) {
             if (fileLock != null) {

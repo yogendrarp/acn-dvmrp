@@ -21,15 +21,7 @@ public class ReadWithLocks {
         DataRead dr = new DataRead();
         dr.dataLines = new ArrayList<String>();
         dr.seek = seekPosition;
-        try (FileLock fileLock = fc.tryLock()) {
-           /*
-            if (fileLock != null) {
-                randomAccessFile.seek(randomAccessFile.length());
-                while (buffer.hasRemaining())
-                    fc.read(buffer);
-            }
-            DataRead dr = new DataRead(buffer.toString(), randomAccessFile.length());
-            return dr;*/
+        try {
             randomAccessFile.seek(seekPosition);
             String tmp;
             while ((tmp = randomAccessFile.readLine()) != null) {
