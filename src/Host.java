@@ -25,24 +25,35 @@ public class Host {
         String inFileName = inFile.replace("X", lanId);
         int timeToStart = 0, period = 0,
                 sendActiveReceiverMsgTimeInSec = 10, checkForMsgTimeInSec = 1;
-        if (type == "sender" && args.length == 5) {
+        if (type.equals("sender") && args.length == 5) {
             timeToStart = Integer.parseInt(args[3]);
             period = Integer.parseInt(args[4]);
-            Thread.sleep(timeToStart * 1000);
         } else if (!type.equals("receiver")) {
-            System.out.println(type + " " + "receiver");
             System.exit(-1);
         }
         if (type.equals("sender")) {
-            WriteWithLocks writeWithLocks = new WriteWithLocks(outFileName);
-            for (; ; ) {
-                String receiverMsg = String.format("data %s%s", lanId, System.lineSeparator());
-                writeWithLocks.writeToFileWithLock(receiverMsg);
-                Thread.sleep(period * 1000);
-            }
+            manageSender(outFileName, lanId, timeToStart, period);
         } else if (type.equals("receiver")) {
             manageReceiver(outFileName, lanId, sendActiveReceiverMsgTimeInSec, lanFileName, checkForMsgTimeInSec, inFileName);
         }
+    }
+
+    static void manageSender(String outFileName, String lanId, int timeToStart, int period) {
+        Timer activeReceiverTimer = new Timer();
+        activeReceiverTimer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                System.out.println("Writing");
+                String receiverMsg = String.format("data %s %s%s", lanId, lanId, System.lineSeparator());
+                WriteWithLocks writeWithLocks = null;
+                try {
+                    writeWithLocks = new WriteWithLocks(outFileName);
+                    writeWithLocks.writeToFileWithLock(receiverMsg);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }, timeToStart * 1000, period * 1000);
     }
 
     static void manageReceiver(String outFileName, String lanId, int sendActiveReceiverMsgTimeInSec,
@@ -93,11 +104,5 @@ public class Host {
                 msg.seek = localmsg.seek;
             }
         }, 0, checkForMsgTimeInSec * 1000);
-
-    }
-
-    static String generateSenderMessage() {
-        String message = "This is a message generated at time :" + new Date().toString();
-        return message;
     }
 }
