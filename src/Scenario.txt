@@ -1,0 +1,23 @@
+In order for you to get an idea of how the project works, consider  a small network consisting of two hosts, a sender and a receiver, four lans, and four routers. The lans and routers and lans are arranged in a circle.
+
+Edit a file, called scenario.sh   (i.e. a scenario shell file) and add the following lines to it
+
+host 0 0 sender 50 20&
+host 1 1 receiver &
+router 0 0 1 &
+router 1 1 2 &
+router 2 2 3 &
+router 3 3 0 &
+controller host 0 1 router 0 1 2 3 lan 0 1 2 3&
+
+Once you have this file, you execute your project by typing the following at the unix prompt:
+
+bash scenario.sh
+
+"bash" is a shell program that will read your commands in scenario.sh and execute them one by one. Since all the commands are simply to instantiate many copies of node (and one controller) and put them in the background, then this terminates quite quickly (less than 2 seconds I hope)
+
+You can then see that all your nodes are running in the background by typing the command
+
+jobs
+
+In about 100 seconds your nodes should terminate on their own, and you can examine the contents of all the houtX, hinX, lanX, and routX files to see that data messages were sent along the correct path, that the distance vectors are correct, etc.
