@@ -47,18 +47,21 @@ public class Host {
 
     static void manageReceiver(String outFileName, String lanId, int sendActiveReceiverMsgTimeInSec,
                                String lanFileName, int checkForMsgTimeInSec, String inFileName) throws IOException {
-        WriteWithLocks writeWithLocks = new WriteWithLocks(outFileName);
         Timer activeReceiverTimer = new Timer();
         activeReceiverTimer.schedule(new TimerTask() {
             @Override
             public void run() {
                 String receiverMsg = String.format("receiver %s%s", lanId, System.lineSeparator());
-                writeWithLocks.writeToFileWithLock(receiverMsg);
+                WriteWithLocks writeWithLocks = null;
+                try {
+                    writeWithLocks = new WriteWithLocks(outFileName);
+                    writeWithLocks.writeToFileWithLock(receiverMsg);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
         }, 0, sendActiveReceiverMsgTimeInSec * 1000);
-
         Timer checkMessagesTimer = new Timer();
-        ReadWithLocks readWithLocks = new ReadWithLocks(lanFileName);
         DataRead msg = new DataRead();
         msg.seek = 0;
         msg.dataLines = new ArrayList<String>();
@@ -67,19 +70,25 @@ public class Host {
             @Override
             public void run() {
                 long previousSeek = msg.seek;
-                DataRead localmsg = readWithLocks.readFromFile(previousSeek);
-                msg.dataLines.clear();
-                for (String line : localmsg.dataLines) {
-                    if (!line.trim().isBlank()) {
-                        try {
-                            FileWriter fw = new FileWriter(inFileName, true);
-                            System.out.println(line);
-                            fw.write(line + System.lineSeparator());
-                            fw.close();
-                        } catch (IOException e) {
-                            System.out.println(e.getMessage());
+                DataRead localmsg = null;
+                try {
+                    ReadWithLocks readWithLocks = new ReadWithLocks(lanFileName);
+                    localmsg = readWithLocks.readFromFile(previousSeek);
+                    msg.dataLines.clear();
+                    for (String line : localmsg.dataLines) {
+                        if (!line.trim().isBlank()) {
+                            try {
+                                FileWriter fw = new FileWriter(inFileName, true);
+                                System.out.println(line);
+                                fw.write(line + System.lineSeparator());
+                                fw.close();
+                            } catch (IOException e) {
+                                System.out.println(e.getMessage());
+                            }
                         }
                     }
+                } catch (IOException e) {
+                    e.printStackTrace();
                 }
                 msg.seek = localmsg.seek;
             }

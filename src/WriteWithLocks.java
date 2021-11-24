@@ -15,7 +15,7 @@ public class WriteWithLocks {
         randomAccessFile = new RandomAccessFile(fileName, "rw");
     }
 
-    public void writeToFileWithLock(String data) {
+    public void writeToFileWithLock(String data) throws IOException {
         ByteBuffer buffer = null;
         fc = randomAccessFile.getChannel();
 
@@ -31,6 +31,9 @@ public class WriteWithLocks {
             }
         } catch (OverlappingFileLockException | IOException ex) {
             System.out.println(String.format("%s .. %s", "Error in writing with Locks", ex.getMessage()));
+        } finally {
+            fc.close();
+            randomAccessFile.close();
         }
     }
 }

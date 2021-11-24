@@ -12,11 +12,10 @@ public class ReadWithLocks {
     private static RandomAccessFile randomAccessFile;
 
     public ReadWithLocks(String fileName) throws FileNotFoundException {
-        System.out.println(fileName);
         randomAccessFile = new RandomAccessFile(fileName, "r");
     }
 
-    public DataRead readFromFile(long seekPosition) {
+    public DataRead readFromFile(long seekPosition) throws IOException {
         fc = randomAccessFile.getChannel();
         DataRead dr = new DataRead();
         dr.dataLines = new ArrayList<String>();
@@ -32,6 +31,9 @@ public class ReadWithLocks {
         } catch (OverlappingFileLockException | IOException ex) {
             System.out.println(String.format("%s .. %s", "Error in writing with Locks", ex.getMessage()));
             return dr;
+        } finally {
+            fc.close();
+            randomAccessFile.close();
         }
     }
 }
