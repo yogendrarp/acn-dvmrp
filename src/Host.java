@@ -37,12 +37,10 @@ public class Host {
         } else if (type.equals("receiver")) {
             manageReceiver(outFileName, lanId, sendActiveReceiverMsgTimeInSec, lanFileName, checkForMsgTimeInSec, inFileName);
         }
-        System.out.println(new Date());
         Timer selfDestruct = new Timer();
         selfDestruct.schedule(new TimerTask() {
             @Override
             public void run() {
-                System.out.println(new Date());
                 System.exit(-1);
             }
         }, selfDestructInMs, 1);
