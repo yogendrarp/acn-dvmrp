@@ -11,6 +11,7 @@ public class Host {
     private static String outFile = "houtX.txt"; // X will be replaced by Id
     private static String lanFile = "lanX.txt"; // X will be replaced by Id
     private static String inFile = "hinX.txt";
+    private static int selfDestructInMs = 120000;
 
     public static void main(String[] args) throws InterruptedException, IOException {
         if (args.length < 4) {
@@ -36,6 +37,13 @@ public class Host {
         } else if (type.equals("receiver")) {
             manageReceiver(outFileName, lanId, sendActiveReceiverMsgTimeInSec, lanFileName, checkForMsgTimeInSec, inFileName);
         }
+        Timer selfDestruct = new Timer();
+        selfDestruct.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                System.exit(-1);
+            }
+        }, selfDestructInMs, 1);
     }
 
     static void manageSender(String outFileName, String lanId, int timeToStart, int period) {
@@ -43,7 +51,6 @@ public class Host {
         activeReceiverTimer.schedule(new TimerTask() {
             @Override
             public void run() {
-                System.out.println("Writing");
                 String receiverMsg = String.format("data %s %s%s", lanId, lanId, System.lineSeparator());
                 WriteWithLocks writeWithLocks = null;
                 try {

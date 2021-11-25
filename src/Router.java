@@ -6,6 +6,7 @@ import java.util.TimerTask;
 
 public class Router {
     static String lanOutFile = "lanX.txt";
+    private static int selfDestructInMs = 120000;
 
     public static void main(String[] args) {
         if (args.length < 2) {
@@ -20,6 +21,13 @@ public class Router {
         long checkMessagesTimerInMs = 1000, dvmrpTimersInMs = 5000;
         manageDvmrp(routerId, lanIds, dvmrpTimersInMs);
         readLanOutFiles(routerId, lanIds, checkMessagesTimerInMs);
+        Timer selfDestruct = new Timer();
+        selfDestruct.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                System.exit(-1);
+            }
+        }, selfDestructInMs, 1);
     }
 
 
