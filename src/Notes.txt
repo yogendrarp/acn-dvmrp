@@ -3,3 +3,13 @@ compile class using javac
 javac Host.java
 run jar cfm Host.jar Host.mf Host.class WriteWithLocks.class
 java -jar
+
+controller: from hout file copy the data to the lan file even if sent by same lan, so there could be
+other receivers in the same lan as source
+
+then router checks in each lan file if there is a message to be sent forward to other lans,
+mark some routes as pruned and dont copy the message there, also on NMR routes
+
+if some node is sending inf as its next distance to you, then its a next hop.. if all nodes are sending non inf then send NMR
+Remove all lans? where there are no recievers
+Also if a router recives NMR from all its links, then send NMR to its router towards source

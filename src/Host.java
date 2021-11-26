@@ -96,10 +96,12 @@ public class Host {
                     for (String line : localmsg.dataLines) {
                         if (!line.trim().isBlank()) {
                             try {
-                                FileWriter fw = new FileWriter(inFileName, true);
-                                System.out.println(line);
-                                fw.write(line + System.lineSeparator());
-                                fw.close();
+                                if (line.startsWith("data")) {
+                                    FileWriter fw = new FileWriter(inFileName, true);
+                                    System.out.println(line);
+                                    fw.write(line + System.lineSeparator());
+                                    fw.close();
+                                }
                             } catch (IOException e) {
                                 System.out.println(e.getMessage());
                             }

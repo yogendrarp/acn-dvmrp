@@ -21,6 +21,9 @@ public class Router {
         long checkMessagesTimerInMs = 1000, dvmrpTimersInMs = 5000;
         manageDvmrp(routerId, lanIds, dvmrpTimersInMs);
         readLanOutFiles(routerId, lanIds, checkMessagesTimerInMs);
+
+        manageNmr(routerId,lanIds);
+
         Timer selfDestruct = new Timer();
         selfDestruct.schedule(new TimerTask() {
             @Override
@@ -28,6 +31,11 @@ public class Router {
                 System.exit(-1);
             }
         }, selfDestructInMs, 1);
+    }
+
+    // TODO: 11/25/2021 NMR implementation
+    private static void manageNmr(int routerId, int[] lanIds) {
+        
     }
 
 
@@ -56,7 +64,7 @@ public class Router {
                         for (String line : localmsg.dataLines) {
                             if (!line.trim().isBlank()) {
                                 try {
-                                    System.out.println(line);
+                                    System.out.println(line); // take action here
                                 } catch (Exception e) {
                                     System.out.println(e.getMessage());
                                 }
@@ -73,5 +81,6 @@ public class Router {
     }
 
     private static void manageDvmrp(int routerId, int[] lanIds, long dvmrpTimersInMs) {
+
     }
 }

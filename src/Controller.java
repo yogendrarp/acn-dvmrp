@@ -95,7 +95,10 @@ public class Controller {
                         for (String line : localmsg.dataLines) {
                             if (!line.trim().isBlank()) {
                                 try {
-                                    System.out.println(line);
+                                    String[] content = line.split(" ");
+                                    String _lanFileName = lanFile.replace("X", content[1]);
+                                    WriteWithLocks _writeWithLocks = new WriteWithLocks(_lanFileName);
+                                    _writeWithLocks.writeToFileWithLock(line);
                                     hostMsgs[i].dataLines.add(line);
                                 } catch (Exception e) {
                                     System.out.println(e.getMessage());
@@ -108,7 +111,7 @@ public class Controller {
                     e.printStackTrace();
                 }
 
-                try {
+                /*try {
                     for (int i = 0; i < routerIds.length; i++) {
                         long previousSeek = routerMsgs[i].seek;
                         DataRead localmsg = null;
@@ -130,7 +133,7 @@ public class Controller {
                     }
                 } catch (IOException e) {
                     e.printStackTrace();
-                }
+                }*/
             }
         }, 0, checkTimeInMs);
 
