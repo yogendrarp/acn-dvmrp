@@ -1,3 +1,4 @@
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Timer;
@@ -89,6 +90,10 @@ public class Controller {
                         long previousSeek = hostMsgs[i].seek;
                         DataRead localmsg = null;
                         String hostFileName = hostFile.replace("X", hostIds[i] + "");
+                        File _tmpFile = new File(hostFileName);
+                        if (!(_tmpFile.exists())) {
+                            continue;
+                        }
                         ReadWithLocks readWithLocks = new ReadWithLocks(hostFileName);
                         localmsg = readWithLocks.readFromFile(previousSeek);
                         hostMsgs[i].dataLines.clear();
@@ -98,7 +103,7 @@ public class Controller {
                                     String[] content = line.split(" ");
                                     String _lanFileName = lanFile.replace("X", content[1]);
                                     WriteWithLocks _writeWithLocks = new WriteWithLocks(_lanFileName);
-                                    _writeWithLocks.writeToFileWithLock(line);
+                                    _writeWithLocks.writeToFileWithLock(line + "\n");
                                     hostMsgs[i].dataLines.add(line);
                                 } catch (Exception e) {
                                     System.out.println(e.getMessage());
@@ -111,11 +116,15 @@ public class Controller {
                     e.printStackTrace();
                 }
 
-                /*try {
+                try {
                     for (int i = 0; i < routerIds.length; i++) {
                         long previousSeek = routerMsgs[i].seek;
                         DataRead localmsg = null;
                         String routerFileName = routFile.replace("X", routerIds[i] + "");
+                        File file = new File(routerFileName);
+                        if (!file.exists()) {
+                            continue;
+                        }
                         ReadWithLocks readWithLocks = new ReadWithLocks(routerFileName);
                         localmsg = readWithLocks.readFromFile(previousSeek);
                         routerMsgs[i].dataLines.clear();
@@ -133,7 +142,7 @@ public class Controller {
                     }
                 } catch (IOException e) {
                     e.printStackTrace();
-                }*/
+                }
             }
         }, 0, checkTimeInMs);
 

@@ -1,4 +1,5 @@
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -14,7 +15,7 @@ public class Host {
     private static int selfDestructInMs = 120000;
 
     public static void main(String[] args) throws InterruptedException, IOException {
-        if (args.length < 4) {
+        if (args.length < 3) {
             System.out.println("Missing Arguments");
             System.exit(-1);
         }
@@ -30,8 +31,13 @@ public class Host {
             timeToStart = Integer.parseInt(args[3]);
             period = Integer.parseInt(args[4]);
         } else if (!type.equals("receiver")) {
+            System.out.println("Outaded Loude, wrong code");
+            Thread.sleep(10000);
             System.exit(-1);
         }
+        System.out.println(String.format("Host Id is %s and type is %s", hostId, type));
+        Thread.sleep(2000);
+
         if (type.equals("sender")) {
             manageSender(outFileName, lanId, timeToStart, period);
         } else if (type.equals("receiver")) {
@@ -90,27 +96,30 @@ public class Host {
                 long previousSeek = msg.seek;
                 DataRead localmsg = null;
                 try {
-                    ReadWithLocks readWithLocks = new ReadWithLocks(lanFileName);
-                    localmsg = readWithLocks.readFromFile(previousSeek);
-                    msg.dataLines.clear();
-                    for (String line : localmsg.dataLines) {
-                        if (!line.trim().isBlank()) {
-                            try {
-                                if (line.startsWith("data")) {
-                                    FileWriter fw = new FileWriter(inFileName, true);
-                                    System.out.println(line);
-                                    fw.write(line + System.lineSeparator());
-                                    fw.close();
+                    File _tmpFile = new File(lanFileName);
+                    if (_tmpFile.exists()) {
+                        ReadWithLocks readWithLocks = new ReadWithLocks(lanFileName);
+                        localmsg = readWithLocks.readFromFile(previousSeek);
+                        msg.dataLines.clear();
+                        for (String line : localmsg.dataLines) {
+                            if (!line.trim().isBlank()) {
+                                try {
+                                    if (line.startsWith("data")) {
+                                        FileWriter fw = new FileWriter(inFileName, true);
+                                        fw.write(line + System.lineSeparator());
+                                        fw.close();
+                                    }
+                                } catch (IOException e) {
+                                    System.out.println(e.getMessage());
                                 }
-                            } catch (IOException e) {
-                                System.out.println(e.getMessage());
                             }
                         }
+                        msg.seek = localmsg.seek;
                     }
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-                msg.seek = localmsg.seek;
+
             }
         }, 0, checkForMsgTimeInSec * 1000);
     }

@@ -1,7 +1,7 @@
 compile class using javac
 
 javac Host.java
-jar cfm Host.jar Host.mf Host.class WriteWithLocks.class
+run jar cfm Host.jar Host.mf Host.class WriteWithLocks.class
 java -jar
 
 controller: from hout file copy the data to the lan file even if sent by same lan, so there could be
