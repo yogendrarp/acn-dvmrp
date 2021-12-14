@@ -102,10 +102,9 @@ public class Host {
                         localmsg = readWithLocks.readFromFile(previousSeek);
                         msg.dataLines.clear();
                         for (String line : localmsg.dataLines) {
-                            if (!line.trim().isBlank()) {
+                            if (!line.trim().isEmpty()) {
                                 try {
                                     if (line.startsWith("data")) {
-                                        System.out.println("Data found, will write to my hinfile");
                                         FileWriter fw = new FileWriter(inFileName, true);
                                         fw.write(line + System.lineSeparator());
                                         fw.close();

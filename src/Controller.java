@@ -131,7 +131,7 @@ public class Controller {
                         localmsg = readWithLocks.readFromFile(previousSeek);
                         routerMsgs[i].dataLines.clear();
                         for (String line : localmsg.dataLines) {
-                            if (!line.trim().isBlank()) {
+                            if (!line.trim().isEmpty()) {
                                 try {
                                     String[] splitLine = line.split(" ");
                                     String _lanFileName = lanFile.replace("X", splitLine[1]);
