@@ -15,9 +15,10 @@ public class Host {
     private static int selfDestructInMs = 120000;
 
     public static void main(String[] args) throws InterruptedException, IOException {
+        System.out.println("Starting Host");
         if (args.length < 3) {
             System.out.println("Missing Arguments");
-            System.exit(-1);
+            //System.exit(-1);
         }
         String hostId = args[0];
         String lanId = args[1];
@@ -31,12 +32,11 @@ public class Host {
             timeToStart = Integer.parseInt(args[3]);
             period = Integer.parseInt(args[4]);
         } else if (!type.equals("receiver")) {
-            System.out.println("Outaded Loude, wrong code");
+            System.out.println("wrong code");
             Thread.sleep(10000);
-            System.exit(-1);
+            // System.exit(-1);
         }
         System.out.println(String.format("Host Id is %s and type is %s", hostId, type));
-        Thread.sleep(2000);
 
         if (type.equals("sender")) {
             manageSender(outFileName, lanId, timeToStart, period);
@@ -105,6 +105,7 @@ public class Host {
                             if (!line.trim().isBlank()) {
                                 try {
                                     if (line.startsWith("data")) {
+                                        System.out.println("Data found, will write to my hinfile");
                                         FileWriter fw = new FileWriter(inFileName, true);
                                         fw.write(line + System.lineSeparator());
                                         fw.close();

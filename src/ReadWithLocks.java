@@ -29,7 +29,7 @@ public class ReadWithLocks {
             dr.seek = randomAccessFile.length();
             return dr;
         } catch (OverlappingFileLockException | IOException ex) {
-            System.out.println(String.format("%s .. %s", "Error in writing with Locks", ex.getMessage()));
+            //System.out.println(String.format("%s .. %s", "Error in writing with Locks", ex.getMessage()));
             return dr;
         } finally {
             fc.close();

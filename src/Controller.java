@@ -11,10 +11,12 @@ public class Controller {
     private static String routFile = "routX.txt";
 
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws InterruptedException {
+        System.out.println("Starting Controller");
+
         if (args.length < 6) {
             System.out.println("Minimum arguments needed");
-            System.exit(-1);
+            //System.exit(-1);
         }
         boolean routerFound = false, hostFound = false, lanFound = false;
         int hostIndex = 0, routerIndex = 0, lanIndex = 0, checkTimeInMs = 1000;
@@ -32,7 +34,7 @@ public class Controller {
         }
         if (!(routerFound && lanFound && hostFound)) {
             System.out.println("Some pieces of information missing, check all arguments");
-            System.exit(-1);
+            // System.exit(-1);
         }
 
         //Assuming the args are in order of host, router and lan
@@ -131,7 +133,10 @@ public class Controller {
                         for (String line : localmsg.dataLines) {
                             if (!line.trim().isBlank()) {
                                 try {
-                                    System.out.println(line);
+                                    String[] splitLine = line.split(" ");
+                                    String _lanFileName = lanFile.replace("X", splitLine[1]);
+                                    WriteWithLocks _writeWithLocks = new WriteWithLocks(_lanFileName);
+                                    _writeWithLocks.writeToFileWithLock(line + "\n");
                                     routerMsgs[i].dataLines.add(line);
                                 } catch (Exception e) {
                                     System.out.println(e.getMessage());
