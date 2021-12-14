@@ -30,7 +30,7 @@ public class WriteWithLocks {
                     fc.write(buffer);
             }
         } catch (OverlappingFileLockException | IOException ex) {
-            System.out.println(String.format("%s .. %s", "Error in writing with Locks", ex.getMessage()));
+            //System.out.println(String.format("%s .. %s", "Error in writing with Locks", ex.getMessage()));
         } finally {
             fc.close();
             randomAccessFile.close();

@@ -1,7 +1,7 @@
 import java.io.*;
 import java.util.*;
 
-public class Router {
+public class RouterY {
 
     static String lanOutFile = "lanX.txt";
     static String routFile = "routX.txt";
@@ -21,6 +21,7 @@ public class Router {
         System.out.println("Starting Router");
         if (args.length < 2) {
             System.out.println("Need at the least one LAN attached to the router");
+            //System.exit(-1);
         }
         int routerId = Integer.parseInt(args[0]);
 
@@ -35,6 +36,7 @@ public class Router {
             routerHop[1] = 10;
             dvRoutingMap.put(i, routerHop);
             i++;
+
         }
         Arrays.fill(lanSeekPosition, 0L);
         Arrays.fill(receiverTracking, 0L);
@@ -75,7 +77,7 @@ public class Router {
                     lanNumber++;
                 }
             }
-        }, 0, NMRTimeInMs);
+        }, NMRTimeInMs, 1);
     }
 
 
@@ -85,7 +87,6 @@ public class Router {
         manageRouterTimer.schedule(new TimerTask() {
             @Override
             public void run() {
-                System.out.println(new Date());
                 StringBuilder dvmrpMsg = new StringBuilder();
                 for (Integer dvLanId : dvRoutingMap.keySet()) {
                     dvmrpMsg.append(" ").append(dvRoutingMap.get(dvLanId)[0]).append(" ").append(dvRoutingMap.get(dvLanId)[1]);
@@ -106,7 +107,7 @@ public class Router {
                     }
                 }
             }
-        }, 0, DVMRPTimeInMs);
+        }, DVMRPTimeInMs, 1);
     }
 
 
@@ -133,6 +134,7 @@ public class Router {
                                     if (contents[0].equalsIgnoreCase("data")) {
                                         for (int j = 0; j < directlyAttachedLanCounts; j++) {
                                             Integer localLanId = attachedLans[j];
+                                            System.out.println(localLanId + " " + dvRoutingMap.get(localLanId)[0]);
                                             if (null != localLanId && lanId != localLanId && dvRoutingMap.get(localLanId)[0] == 0) {
                                                 String dataLanLine = line.replaceFirst(String.valueOf(line.charAt(5)), localLanId.toString());
                                                 WriteWithLocks writeWithLocks = null;
@@ -183,6 +185,6 @@ public class Router {
                     }
                 }
             }
-        }, 0, readLanTimerInMs);
+        }, readLanTimerInMs, 1);
     }
 }
