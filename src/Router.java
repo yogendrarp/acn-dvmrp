@@ -85,7 +85,6 @@ public class Router {
         manageRouterTimer.schedule(new TimerTask() {
             @Override
             public void run() {
-                System.out.println(new Date());
                 StringBuilder dvmrpMsg = new StringBuilder();
                 for (Integer dvLanId : dvRoutingMap.keySet()) {
                     dvmrpMsg.append(" ").append(dvRoutingMap.get(dvLanId)[0]).append(" ").append(dvRoutingMap.get(dvLanId)[1]);
@@ -138,7 +137,7 @@ public class Router {
                                                 WriteWithLocks writeWithLocks = null;
                                                 try {
                                                     writeWithLocks = new WriteWithLocks(routerFileName);
-                                                    writeWithLocks.writeToFileWithLock(dataLanLine);
+                                                    writeWithLocks.writeToFileWithLock(dataLanLine + System.lineSeparator());
                                                 } catch (IOException e) {
                                                     e.printStackTrace();
                                                 }
@@ -149,7 +148,6 @@ public class Router {
                                         int msgSrcRouterId = Integer.parseInt(contents[2]);
                                         int indexForRoutingMap = 0;
                                         int hopCountIndex = 3;
-                                        System.out.println("DV " + msgSrcLanId + " " + msgSrcRouterId + " ");
                                         dvRoutingMap.get(msgSrcLanId)[0] = 0;
                                         dvRoutingMap.get(msgSrcLanId)[1] = Math.min(msgSrcRouterId, dvRoutingMap.get(msgSrcLanId)[1]);
                                         while (hopCountIndex + 1 < contents.length && indexForRoutingMap < 10 && indexForRoutingMap != msgSrcLanId) {
