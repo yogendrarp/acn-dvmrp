@@ -4,19 +4,18 @@ import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
 
-public class Controller {
-    private static int selfDestructInMs = 120000;
-    private static String hostFile = "houtX.txt";
-    private static String lanFile = "lanX.txt";
-    private static String routFile = "routX.txt";
+public class controller {
+    static int selfDestructInMs = 120000;
+    static String hostFile = "houtX.txt";
+    static String lanFile = "lanX.txt";
+    static String routFile = "routX.txt";
 
-
-    public static void main(String[] args) throws InterruptedException {
+    public static void main(String[] args) {
         System.out.println("Starting Controller");
 
         if (args.length < 6) {
             System.out.println("Minimum arguments needed");
-            //System.exit(-1);
+            System.exit(-1);
         }
         boolean routerFound = false, hostFound = false, lanFound = false;
         int hostIndex = 0, routerIndex = 0, lanIndex = 0, checkTimeInMs = 1000;
@@ -67,18 +66,18 @@ public class Controller {
 
     private static void readAllDeviceFiles(int[] hostIds, int[] routerIds, int[] lanIds, int checkTimeInMs) {
         Timer checkMessagesTimer = new Timer();
-        DataRead[] hostMsgs = new DataRead[hostIds.length];
-        DataRead[] routerMsgs = new DataRead[routerIds.length];
+        dataread[] hostMsgs = new dataread[hostIds.length];
+        dataread[] routerMsgs = new dataread[routerIds.length];
 
         for (int i = 0; i < hostMsgs.length; i++) {
-            DataRead msg = new DataRead();
+            dataread msg = new dataread();
             msg.seek = 0;
             msg.dataLines = new ArrayList<String>();
             hostMsgs[i] = msg;
         }
 
         for (int i = 0; i < routerMsgs.length; i++) {
-            DataRead msg = new DataRead();
+            dataread msg = new dataread();
             msg.seek = 0;
             msg.dataLines = new ArrayList<String>();
             routerMsgs[i] = msg;
@@ -90,21 +89,21 @@ public class Controller {
                 try {
                     for (int i = 0; i < hostIds.length; i++) {
                         long previousSeek = hostMsgs[i].seek;
-                        DataRead localmsg = null;
+                        dataread localmsg = null;
                         String hostFileName = hostFile.replace("X", hostIds[i] + "");
                         File _tmpFile = new File(hostFileName);
                         if (!(_tmpFile.exists())) {
                             continue;
                         }
-                        ReadWithLocks readWithLocks = new ReadWithLocks(hostFileName);
+                        readwithlocks readWithLocks = new readwithlocks(hostFileName);
                         localmsg = readWithLocks.readFromFile(previousSeek);
                         hostMsgs[i].dataLines.clear();
                         for (String line : localmsg.dataLines) {
-                            if (!line.trim().isBlank()) {
+                            if (!line.trim().isEmpty()) {
                                 try {
                                     String[] content = line.split(" ");
                                     String _lanFileName = lanFile.replace("X", content[1]);
-                                    WriteWithLocks _writeWithLocks = new WriteWithLocks(_lanFileName);
+                                    writewithlocks _writeWithLocks = new writewithlocks(_lanFileName);
                                     _writeWithLocks.writeToFileWithLock(line + "\n");
                                     hostMsgs[i].dataLines.add(line);
                                 } catch (Exception e) {
@@ -121,13 +120,13 @@ public class Controller {
                 try {
                     for (int i = 0; i < routerIds.length; i++) {
                         long previousSeek = routerMsgs[i].seek;
-                        DataRead localmsg = null;
+                        dataread localmsg = null;
                         String routerFileName = routFile.replace("X", routerIds[i] + "");
                         File file = new File(routerFileName);
                         if (!file.exists()) {
                             continue;
                         }
-                        ReadWithLocks readWithLocks = new ReadWithLocks(routerFileName);
+                        readwithlocks readWithLocks = new readwithlocks(routerFileName);
                         localmsg = readWithLocks.readFromFile(previousSeek);
                         routerMsgs[i].dataLines.clear();
                         for (String line : localmsg.dataLines) {
@@ -135,7 +134,7 @@ public class Controller {
                                 try {
                                     String[] splitLine = line.split(" ");
                                     String _lanFileName = lanFile.replace("X", splitLine[1]);
-                                    WriteWithLocks _writeWithLocks = new WriteWithLocks(_lanFileName);
+                                    writewithlocks _writeWithLocks = new writewithlocks(_lanFileName);
                                     _writeWithLocks.writeToFileWithLock(line + "\n");
                                     routerMsgs[i].dataLines.add(line);
                                 } catch (Exception e) {

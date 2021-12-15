@@ -1,6 +1,6 @@
 import java.util.ArrayList;
 
-public class DataRead {
+public class dataread {
     ArrayList<String> dataLines;
     long seek;
 }
