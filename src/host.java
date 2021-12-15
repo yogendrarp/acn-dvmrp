@@ -1,14 +1,12 @@
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.Timer;
 import java.util.TimerTask;
 
-public class Host {
+public class host {
     static String outFile = "houtX.txt"; // X will be replaced by Id
     static String lanFile = "lanX.txt"; // X will be replaced by Id
     static String inFile = "hinX.txt";
@@ -58,9 +56,9 @@ public class Host {
             @Override
             public void run() {
                 String receiverMsg = String.format("data %s %s%s", lanId, lanId, System.lineSeparator());
-                WriteWithLocks writeWithLocks = null;
+                writewithlocks writeWithLocks = null;
                 try {
-                    writeWithLocks = new WriteWithLocks(outFileName);
+                    writeWithLocks = new writewithlocks(outFileName);
                     writeWithLocks.writeToFileWithLock(receiverMsg);
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -76,9 +74,9 @@ public class Host {
             @Override
             public void run() {
                 String receiverMsg = String.format("receiver %s%s", lanId, System.lineSeparator());
-                WriteWithLocks writeWithLocks = null;
+                writewithlocks writeWithLocks = null;
                 try {
-                    writeWithLocks = new WriteWithLocks(outFileName);
+                    writeWithLocks = new writewithlocks(outFileName);
                     writeWithLocks.writeToFileWithLock(receiverMsg);
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -86,7 +84,7 @@ public class Host {
             }
         }, 0, sendActiveReceiverMsgTimeInSec * 1000);
         Timer checkMessagesTimer = new Timer();
-        DataRead msg = new DataRead();
+        dataread msg = new dataread();
         msg.seek = 0;
         msg.dataLines = new ArrayList<String>();
 
@@ -94,11 +92,11 @@ public class Host {
             @Override
             public void run() {
                 long previousSeek = msg.seek;
-                DataRead localmsg = null;
+                dataread localmsg = null;
                 try {
                     File _tmpFile = new File(lanFileName);
                     if (_tmpFile.exists()) {
-                        ReadWithLocks readWithLocks = new ReadWithLocks(lanFileName);
+                        readwithlocks readWithLocks = new readwithlocks(lanFileName);
                         localmsg = readWithLocks.readFromFile(previousSeek);
                         msg.dataLines.clear();
                         for (String line : localmsg.dataLines) {

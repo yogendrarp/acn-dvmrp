@@ -1,7 +1,7 @@
 import java.io.*;
 import java.util.*;
 
-public class Router {
+public class router {
 
     static String lanOutFile = "lanX.txt";
     static String routFile = "routX.txt";
@@ -64,9 +64,9 @@ public class Router {
                     if (currentTime - receiverInTreesTracking[lanId] > 20000 && receiverInTreesTracking[lanId] > 0) {
                         StringBuffer nmrmsg = new StringBuffer();
                         nmrmsg.append("NMR ").append(lanId + " ").append(routerId + " ").append(lanId);
-                        WriteWithLocks writeWithLocks = null;
+                        writewithlocks writeWithLocks = null;
                         try {
-                            writeWithLocks = new WriteWithLocks(routerFileName);
+                            writeWithLocks = new writewithlocks(routerFileName);
                             writeWithLocks.writeToFileWithLock(nmrmsg.toString());
                         } catch (IOException e) {
                             e.printStackTrace();
@@ -95,9 +95,9 @@ public class Router {
                         StringBuilder dvMessageComplete = new StringBuilder();
                         dvMessageComplete.append("DV ").append(srcLanId).append(" ").append(routerId).append(dvmrpMsg).append(System.lineSeparator());
                         String msg = dvMessageComplete.toString();
-                        WriteWithLocks writeWithLocks = null;
+                        writewithlocks writeWithLocks = null;
                         try {
-                            writeWithLocks = new WriteWithLocks(routerOutFileName);
+                            writeWithLocks = new writewithlocks(routerOutFileName);
                             writeWithLocks.writeToFileWithLock(msg);
                         } catch (IOException e) {
                             e.printStackTrace();
@@ -121,11 +121,11 @@ public class Router {
                     String lanFileName = lanOutFile.replace("X", String.format("%s", lanId));
                     File lanFile = new File(lanFileName);
                     if (lanFile.exists()) {
-                        DataRead localmsg = null;
+                        dataread localmsg = null;
                         try {
                             File _tmpFile = new File(lanFileName);
                             if (_tmpFile.exists()) {
-                                ReadWithLocks readWithLocks = new ReadWithLocks(lanFileName);
+                                readwithlocks readWithLocks = new readwithlocks(lanFileName);
                                 localmsg = readWithLocks.readFromFile(lanSeekPosition[lanNumber]);
                                 for (String line : localmsg.dataLines) {
                                     String[] contents = line.split(" ");
@@ -134,9 +134,9 @@ public class Router {
                                             Integer localLanId = attachedLans[j];
                                             if (null != localLanId && lanId != localLanId && routingTableMap.get(localLanId)[0] == 0) {
                                                 String dataLanLine = line.replaceFirst(String.valueOf(line.charAt(5)), localLanId.toString());
-                                                WriteWithLocks writeWithLocks = null;
+                                                writewithlocks writeWithLocks = null;
                                                 try {
-                                                    writeWithLocks = new WriteWithLocks(routerFileName);
+                                                    writeWithLocks = new writewithlocks(routerFileName);
                                                     writeWithLocks.writeToFileWithLock(dataLanLine + System.lineSeparator());
                                                 } catch (IOException e) {
                                                     e.printStackTrace();
