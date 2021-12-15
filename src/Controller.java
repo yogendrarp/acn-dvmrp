@@ -5,18 +5,17 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 public class Controller {
-    private static int selfDestructInMs = 120000;
-    private static String hostFile = "houtX.txt";
-    private static String lanFile = "lanX.txt";
-    private static String routFile = "routX.txt";
+    static int selfDestructInMs = 120000;
+    static String hostFile = "houtX.txt";
+    static String lanFile = "lanX.txt";
+    static String routFile = "routX.txt";
 
-
-    public static void main(String[] args) throws InterruptedException {
+    public static void main(String[] args) {
         System.out.println("Starting Controller");
 
         if (args.length < 6) {
             System.out.println("Minimum arguments needed");
-            //System.exit(-1);
+            System.exit(-1);
         }
         boolean routerFound = false, hostFound = false, lanFound = false;
         int hostIndex = 0, routerIndex = 0, lanIndex = 0, checkTimeInMs = 1000;

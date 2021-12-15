@@ -9,16 +9,16 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 public class Host {
-    private static String outFile = "houtX.txt"; // X will be replaced by Id
-    private static String lanFile = "lanX.txt"; // X will be replaced by Id
-    private static String inFile = "hinX.txt";
-    private static int selfDestructInMs = 120000;
+    static String outFile = "houtX.txt"; // X will be replaced by Id
+    static String lanFile = "lanX.txt"; // X will be replaced by Id
+    static String inFile = "hinX.txt";
+    static int selfDestructInMs = 120000;
 
     public static void main(String[] args) throws InterruptedException, IOException {
         System.out.println("Starting Host");
         if (args.length < 3) {
             System.out.println("Missing Arguments");
-            //System.exit(-1);
+            System.exit(-1);
         }
         String hostId = args[0];
         String lanId = args[1];
