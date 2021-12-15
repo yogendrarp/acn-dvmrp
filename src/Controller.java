@@ -99,7 +99,7 @@ public class Controller {
                         localmsg = readWithLocks.readFromFile(previousSeek);
                         hostMsgs[i].dataLines.clear();
                         for (String line : localmsg.dataLines) {
-                            if (!line.trim().isBlank()) {
+                            if (!line.trim().isEmpty()) {
                                 try {
                                     String[] content = line.split(" ");
                                     String _lanFileName = lanFile.replace("X", content[1]);
